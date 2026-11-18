@@ -25,7 +25,8 @@ if (!$data) {
 }
 
 $studentName = isset($data['studentName']) ? trim($data['studentName']) : (isset($data['Student Name']) ? trim($data['Student Name']) : '');
-$phone       = isset($data['phone']) ? trim($data['phone']) : (isset($data['Phone Number']) ? trim($data['Phone Number']) : '');
+$phone       = isset($data['phone']) ? trim($data['phone']) : (isset($data['Student Mobile (Primary WhatsApp)']) ? trim($data['Student Mobile (Primary WhatsApp)']) : (isset($data['Phone Number']) ? trim($data['Phone Number']) : ''));
+$altPhone    = isset($data['altPhone']) ? trim($data['altPhone']) : (isset($data['Parent / Alternate Mobile']) ? trim($data['Parent / Alternate Mobile']) : '');
 $email       = isset($data['email']) ? trim($data['email']) : (isset($data['Email']) ? trim($data['Email']) : '');
 $cutoffMarks = isset($data['cutoffMarks']) ? trim($data['cutoffMarks']) : (isset($data['12th Cut-off Marks']) ? trim($data['12th Cut-off Marks']) : '');
 $course      = isset($data['course']) ? trim($data['course']) : (isset($data['Target Degree']) ? trim($data['Target Degree']) : '');
@@ -52,6 +53,7 @@ $newLead = [
     "id"           => 'LEAD-' . date('Ymd-His') . '-' . rand(100, 999),
     "studentName"  => htmlspecialchars($studentName),
     "phone"        => htmlspecialchars($phone),
+    "altPhone"     => htmlspecialchars($altPhone),
     "email"        => htmlspecialchars($email),
     "cutoffMarks"  => htmlspecialchars($cutoffMarks),
     "course"       => htmlspecialchars($course),

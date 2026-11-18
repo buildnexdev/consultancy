@@ -28,6 +28,7 @@ export default function EnquiryForm({
   const [studentName, setStudentName] = useState('');
   const [parentName, setParentName] = useState('');
   const [phone, setPhone] = useState('');
+  const [altPhone, setAltPhone] = useState('');
   const [email, setEmail] = useState('');
   const [currentCity, setCurrentCity] = useState('');
   const [cutoffMarks, setCutoffMarks] = useState('');
@@ -73,12 +74,20 @@ export default function EnquiryForm({
       newErrors.studentName = 'Student name is required.';
     }
 
-    // 10-digit Indian mobile validation
+    // 10-digit Indian mobile validation (Primary - Student)
     const cleanPhone = phone.replace(/[^0-9]/g, '');
     if (!cleanPhone) {
-      newErrors.phone = 'Phone number is required.';
+      newErrors.phone = 'Student mobile number is required.';
     } else if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
       newErrors.phone = 'Please enter a valid 10-digit Indian mobile number.';
+    }
+
+    // 10-digit Indian mobile validation (Secondary - Parent / Alternate)
+    const cleanAltPhone = altPhone.replace(/[^0-9]/g, '');
+    if (!cleanAltPhone) {
+      newErrors.altPhone = 'Parent / Alternate contact number is required.';
+    } else if (!/^[6-9]\d{9}$/.test(cleanAltPhone)) {
+      newErrors.altPhone = 'Please enter a valid 10-digit Indian mobile number.';
     }
 
     if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -121,7 +130,8 @@ export default function EnquiryForm({
       _replyto: email || undefined,
       "Student Name": studentName,
       "Parent / Guardian Name": parentName || 'Not specified',
-      "Phone Number": phone,
+      "Student Mobile (Primary WhatsApp)": phone,
+      "Parent / Alternate Mobile": altPhone,
       "Email Address": email || 'Not specified',
       "Current City / District": currentCity || 'Not specified',
       "12th Marks / Cut-off": cutoffMarks || 'Not specified',
@@ -134,6 +144,7 @@ export default function EnquiryForm({
       // Raw fields for backend API
       studentName,
       phone,
+      altPhone,
       email,
       cutoffMarks,
       course: preferredDegree,
@@ -193,6 +204,7 @@ export default function EnquiryForm({
     setStudentName('');
     setParentName('');
     setPhone('');
+    setAltPhone('');
     setEmail('');
     setCurrentCity('');
     setCutoffMarks('');
@@ -218,7 +230,7 @@ export default function EnquiryForm({
         </h3>
 
         <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-          Thank you, <strong className="text-slate-900">{studentName}</strong>. Your enquiry has been sent to our admissions team. An academic counselor will contact you at <strong className="text-blue-900">{phone}</strong> shortly with complete fee structures, cut-offs, and seat options.
+          Thank you, <strong className="text-slate-900">{studentName}</strong>. Your enquiry has been sent to our admissions team. An academic counselor will contact you at <strong className="text-blue-900">{phone}</strong> {altPhone ? `or ${altPhone}` : ''} shortly with complete fee structures, cut-offs, and seat options.
         </p>
 
         {/* Summary Card */}
@@ -227,6 +239,8 @@ export default function EnquiryForm({
             Application Summary
           </div>
           <div><strong>Student:</strong> {studentName}</div>
+          <div><strong>Student Mobile:</strong> {phone}</div>
+          {altPhone && <div><strong>Parent / Alt Mobile:</strong> {altPhone}</div>}
           <div><strong>Course:</strong> {preferredDegree} {preferredBranch ? `(${preferredBranch})` : ''}</div>
           <div><strong>Preferred District:</strong> {preferredDistrict || 'Any'}</div>
           <div><strong>Target College(s):</strong> {selectedColleges.length > 0 ? selectedColleges.join(', ') : 'Open to counselor recommendation'}</div>
@@ -313,11 +327,11 @@ export default function EnquiryForm({
         </div>
       </div>
 
-      {/* Row 2: Phone & Email */}
+      {/* Row 2: 2 Contact Numbers - Student Mobile & Parent/Alternate Mobile */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
-            Student / Parent Mobile Number <span className="text-red-500">*</span>
+            Student Mobile (WhatsApp) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <span className="absolute left-3 top-2.5 text-xs font-bold text-slate-400">
@@ -326,7 +340,7 @@ export default function EnquiryForm({
             <input
               type="tel"
               maxLength="10"
-              placeholder="9876543210"
+              placeholder="Student 10-digit number"
               value={phone}
               onChange={(e) => {
                 const val = e.target.value.replace(/[^0-9]/g, '');
@@ -341,6 +355,35 @@ export default function EnquiryForm({
           )}
         </div>
 
+        <div>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
+            Parent / Alternate Mobile <span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <span className="absolute left-3 top-2.5 text-xs font-bold text-slate-400">
+              +91
+            </span>
+            <input
+              type="tel"
+              maxLength="10"
+              placeholder="Parent / Alternate 10-digit number"
+              value={altPhone}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, '');
+                setAltPhone(val);
+                if (errors.altPhone) setErrors({ ...errors, altPhone: null });
+              }}
+              className={`w-full bg-white border ${errors.altPhone ? 'border-red-500 ring-1 ring-red-500' : 'border-slate-300'} rounded-xl pl-12 pr-3.5 py-2.5 text-xs sm:text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600`}
+            />
+          </div>
+          {errors.altPhone && (
+            <p className="text-[11px] text-red-600 mt-1">{errors.altPhone}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Row 3: Email Address & Current City */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Email Address <span className="text-slate-400 font-normal">(Optional)</span>
@@ -359,10 +402,7 @@ export default function EnquiryForm({
             <p className="text-[11px] text-red-600 mt-1">{errors.email}</p>
           )}
         </div>
-      </div>
 
-      {/* Row 3: Current City & 12th Cut-off */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Current City / Native District
@@ -375,7 +415,10 @@ export default function EnquiryForm({
             className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
+      </div>
 
+      {/* Row 4: 12th Cut-off Marks & Preferred Course/Degree */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             12th Marks / TNEA Cut-off Mark
@@ -388,10 +431,7 @@ export default function EnquiryForm({
             className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
-      </div>
 
-      {/* Row 4: Preferred Course/Degree & Preferred Branch (Dependent Dropdown) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Preferred Degree / Course <span className="text-red-500">*</span>
@@ -409,7 +449,10 @@ export default function EnquiryForm({
             ))}
           </select>
         </div>
+      </div>
 
+      {/* Row 5: Preferred Branch & Preferred District */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Preferred Branch / Specialization
@@ -425,10 +468,7 @@ export default function EnquiryForm({
             ))}
           </select>
         </div>
-      </div>
 
-      {/* Row 5: Preferred District & Preferred College(s) Multi-Select */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Preferred College District
@@ -444,19 +484,21 @@ export default function EnquiryForm({
             ))}
           </select>
         </div>
+      </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
-            Target College(s) Preference
-          </label>
-          <select
-            value={selectedColleges[0] || ''}
-            onChange={(e) => {
-              const val = e.target.value;
-              setSelectedColleges(val ? [val] : []);
-            }}
-            className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
+      {/* Row 6: Target College(s) Preference */}
+      <div>
+        <label className="block text-xs font-semibold text-slate-700 mb-1">
+          Target College(s) Preference
+        </label>
+        <select
+          value={selectedColleges[0] || ''}
+          onChange={(e) => {
+            const val = e.target.value;
+            setSelectedColleges(val ? [val] : []);
+          }}
+          className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+        >
             <option value="">Open to Recommended Colleges</option>
             {availableColleges.map((col) => (
               <option key={col.id} value={col.name}>
@@ -465,7 +507,6 @@ export default function EnquiryForm({
             ))}
           </select>
         </div>
-      </div>
 
       {/* Row 6: Message / Specific Requirements */}
       <div>

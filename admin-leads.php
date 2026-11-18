@@ -78,7 +78,14 @@ if (file_exists($leadsFile)) {
                                         <div class="text-[11px] text-slate-400"><?= htmlspecialchars($l['email'] ?: 'No email'); ?></div>
                                     </td>
                                     <td class="p-3.5">
-                                        <span class="font-bold text-blue-900"><?= htmlspecialchars($l['phone']); ?></span>
+                                        <div class="font-bold text-blue-900 flex items-center gap-1">
+                                            <span>📱 <?= htmlspecialchars($l['phone']); ?></span>
+                                        </div>
+                                        <?php if (!empty($l['altPhone'])): ?>
+                                            <div class="text-[11px] text-slate-600 flex items-center gap-1 mt-0.5">
+                                                <span>👨‍👩‍👦 <?= htmlspecialchars($l['altPhone']); ?></span>
+                                            </div>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="p-3.5">
                                         <span class="px-2 py-0.5 rounded font-black bg-amber-100 text-amber-900">
@@ -102,11 +109,16 @@ if (file_exists($leadsFile)) {
                                         <?= htmlspecialchars($l['timestamp']); ?>
                                     </td>
                                     <td class="p-3.5 text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <a href="tel:<?= preg_replace('/[^0-9+]/', '', $l['phone']); ?>" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px]">
-                                                📞 Call
+                                        <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                                            <a href="tel:<?= preg_replace('/[^0-9+]/', '', $l['phone']); ?>" class="px-2 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px]" title="Call Student Mobile">
+                                                📞 Call 1
                                             </a>
-                                            <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $l['phone']); ?>?text=<?= urlencode('Hello ' . $l['studentName'] . ', this is Siragugal Higher Education Services regarding your college admission inquiry.'); ?>" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]">
+                                            <?php if (!empty($l['altPhone'])): ?>
+                                                <a href="tel:<?= preg_replace('/[^0-9+]/', '', $l['altPhone']); ?>" class="px-2 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px]" title="Call Parent / Alternate">
+                                                    📞 Call 2
+                                                </a>
+                                            <?php endif; ?>
+                                            <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $l['phone']); ?>?text=<?= urlencode('Hello ' . $l['studentName'] . ', this is Siragugal Higher Education Services regarding your college admission inquiry.'); ?>" target="_blank" class="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]" title="WhatsApp Student">
                                                 💬 WhatsApp
                                             </a>
                                         </div>
